@@ -1,4 +1,4 @@
-from tkinter import Tk, Button
+from tkinter import Tk, Button, StringVar, Entry
 
 """
     Main idea: make fancy calculator
@@ -15,17 +15,34 @@ from tkinter import Tk, Button
     Take input from buttons (0-9), Store that data, do calculations, do until user quits and print final answer on CLI
 """
 
+
 class Window(Tk):
     """
     Settings of main window like layout of buttons, functions
     """
+
     def __init__(self):
-        super().__init__() # inheritance from Tk
+        super().__init__()  # inheritance from Tk
 
         self.title("Calculator")
-        self.button = Button(text="Click me")
+        self.configure(background="light green")
+        self.geometry("300x300")
 
+        self.button = Button(text="Click me").grid(column=2, row=1)
+
+
+class Equation(StringVar):
+    def __init__(self):
+        super().__init__()
+
+
+window = Window()
+
+textBox = Equation()
+expressionField = Entry(window, textvariable=textBox)
+expressionField.grid(columnspan=3, row=0, ipadx=100)
 
 #creates object and starts the program
-window = Window()
+print("ok")
+
 window.mainloop()
