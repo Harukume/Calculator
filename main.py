@@ -1,11 +1,12 @@
-from tkinter import Tk, Button, StringVar, Entry
-from functools import partial
+#from tkinter import Tk, Button, StringVar, Entry
+from functools import partial  #works like lambda (sort of)
+from customtkinter import CTk, CTkEntry, CTkButton, StringVar  #visually better Tk
 
 """
     Main idea: make fancy calculator
     Do it in object oriented style
 
-    Basic operations: +, -, *, /, sqrt(), % (percentage maybe)
+    Basic operations: +, -, *, /, sqrt(), negation, adding ',' (float), =
 
     GUI for calculator (Tkinter)
     
@@ -18,7 +19,7 @@ from functools import partial
 expression = ""  #global variable for holding result
 
 
-class Window(Tk):
+class Window(CTk):
     """
     Settings of main window like layout of buttons, functions
     """
@@ -26,34 +27,38 @@ class Window(Tk):
     def __init__(self):
         super().__init__()  # inheritance from Tk
 
+        #Window settings
         self.title("Calculator")
         self.configure(background="light green")
         self.geometry("300x300")
 
         self.buttons = []  #list for buttons
 
-        buttonValues = [
-            (1, 0, 1), (2, 1, 1), (3, 2, 1), ('Clear', 3, 1),
-            (4, 0, 2), (5, 1, 2), (6, 2, 2),
-            (7, 0, 3), (8, 1, 3), (9, 2, 3),
-            (0, 1, 4),
+        buttonValues = [  #add any button you need ("ButtonValue", column, row)
+            (1, 0, 1), (2, 1, 1), (3, 2, 1), ('Clear', 3, 1), ('<-', 4, 1),
+            (4, 0, 2), (5, 1, 2), (6, 2, 2), ('+', 3, 2), ('-', 4, 2),
+            (7, 0, 3), (8, 1, 3), (9, 2, 3), ('*', 3, 3), ('/', 4, 3),
+            ('+/-', 0, 4), (0, 1, 4), (',', 2, 4), ('sqrt', 3, 4), ('=', 4, 4),
         ]
-        for col in range(4):
+
+        #cols and rows are for making grid even
+        for col in range(5):
             self.grid_columnconfigure(col, weight=1)
         for row in range(5):
             self.grid_rowconfigure(row, weight=1)
 
+        #buttons are added to grid and to list of buttons
         for num, col, row in buttonValues:
-            button = Button(self, text=str(num), bg="green", width=10, height=2,
-                            command=partial(press,num))  #partial remembers to value to func
-            button.grid(column=col, row=row, padx =1, pady =1)
+            button = CTkButton(self, text=str(num), bg_color="green", width=10, height=2,
+                               command=partial(press, num))  #partial remembers to value to func
+            button.grid(column=col, row=row, padx=1, pady=1)
             self.buttons.append(button)
 
 
 def press(num):
     global expression
 
-    if isinstance(num, str): #checks if num is a string
+    if isinstance(num, str):  #checks if num is a string
         clear()
     else:
         expression = expression + str(num)
@@ -61,7 +66,7 @@ def press(num):
         print(expression)
 
 
-def clear(): #clears the display
+def clear():  #clears the display
     global expression
     expression = "0"
     textBox.set(expression)
@@ -69,10 +74,10 @@ def clear(): #clears the display
 
 window = Window()
 
-textBox = StringVar() #display the result
+textBox = StringVar()  #display the result
 textBox.set("0")
-expressionField = Entry(window, textvariable=textBox, font = ('arial', 18, 'bold'))
-expressionField.grid(columnspan=4, column=0, row=0, ipadx=90, ipady=10)
+expressionField = CTkEntry(window, textvariable=textBox, font=('arial', 18, 'bold'))
+expressionField.grid(columnspan=5, column=0, row=0, ipadx=90, ipady=10)
 
 #creates object and starts the program
 print("ok")
