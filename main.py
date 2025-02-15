@@ -1,4 +1,5 @@
 #from tkinter import Tk, Button, StringVar, Entry
+import re
 from functools import partial  #works like lambda (sort of)
 from customtkinter import CTk, CTkEntry, CTkButton, StringVar  #visually better Tk
 from math import sqrt
@@ -115,7 +116,6 @@ def divide():  #divides the number
 def negation():  #negation of number
     global expression
 
-    print(expression[0])
     if expression[0] == "-":
         expression = expression[1:]
     else:
@@ -125,13 +125,21 @@ def negation():  #negation of number
 
 def squareRoot():  #square root
     global expression
-    expression = "sqrt(" + expression + ")"
-    textBox.set(expression)
+
+    match = re.search(r'((\d+)+(\D*))$', expression)  # r-raw string
+
+    if match:
+        lastNumber = match.group()
+        restOfExpression = expression[:match.start(1)]
+
+        expression = f"{restOfExpression}√({lastNumber})"
+
+        textBox.set(expression)
 
 
 def floatNum():
     global expression
-    expression = expression + ",0"
+    expression = expression + ".0"
     textBox.set(expression)
 
 
@@ -150,18 +158,27 @@ def backspace():  #deletes one letter from the end
 def equal():  #show the sum of the numbers
     global expression
 
-    while expression.count("(") > expression.count(")"):
+    while expression.count("(") > expression.count(")"):  #to make sure brackets are closed
         expression += ")"
     try:
+        expression = expression.replace("√", "sqrt")  #checking for sqrt
+
         # Pozwalamy eval używać oprócz wbudowanych jeszcze sqrt
         result = eval(expression, {'sqrt': sqrt})
         print(result)
-        textBox.set(str(result))  # Wyświetlamy wynik
-        expression = str(result)  # Zapisujemy nowy wynik jako expression
+
+        textBox.set(str(result))  # We show result
+        expression = str(result)  # Saving the result
+
     except TypeError as e:
         textBox.set("Error")  # Obsługa błędów (np. dzielenie przez 0)
         print(e)
         expression = ""
+
+    except SyntaxError as syn:
+        expression = expression[:-1]
+        textBox.set(expression)
+        print("You can't do it")
 
 
 window = Window()
