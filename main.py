@@ -1,7 +1,6 @@
 #from tkinter import Tk, Button, StringVar, Entry
 from functools import partial  #works like lambda (sort of)
 from customtkinter import CTk, CTkEntry, CTkButton, StringVar  #visually better Tk
-import math
 from math import sqrt
 
 """
@@ -50,7 +49,7 @@ class Window(CTk):
             "/": divide,
             "+/-": negation,
             ",": floatNum,
-            "√": sqrt,
+            "√": squareRoot,
             "=": equal,
             "<-": backspace,
 
@@ -106,14 +105,14 @@ def multiply():
     textBox.set(expression)
 
 
-def divide(): #divides the number
+def divide():  #divides the number
     global expression
 
     expression = expression + "/"
     textBox.set(expression)
 
 
-def negation(): #negation of number
+def negation():  #negation of number
     global expression
 
     print(expression[0])
@@ -124,9 +123,9 @@ def negation(): #negation of number
     textBox.set(expression)
 
 
-def sqrt():  #square root
+def squareRoot():  #square root
     global expression
-    expression = "math.sqrt(" + expression + ")"
+    expression = "sqrt(" + expression + ")"
     textBox.set(expression)
 
 
@@ -154,15 +153,15 @@ def equal():  #show the sum of the numbers
     while expression.count("(") > expression.count(")"):
         expression += ")"
     try:
-        # Pozwalamy eval używać wszystkich funkcji z math
-        result = eval(expression, {"__builtins__": None}, math.__dict__)
-
+        # Pozwalamy eval używać oprócz wbudowanych jeszcze sqrt
+        result = eval(expression, {'sqrt': sqrt})
+        print(result)
         textBox.set(str(result))  # Wyświetlamy wynik
         expression = str(result)  # Zapisujemy nowy wynik jako expression
-    except Exception as e:
+    except TypeError as e:
         textBox.set("Error")  # Obsługa błędów (np. dzielenie przez 0)
+        print(e)
         expression = ""
-
 
 
 window = Window()
