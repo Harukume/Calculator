@@ -1,7 +1,7 @@
 #from tkinter import Tk, Button, StringVar, Entry
 import re
 from functools import partial  #works like lambda (sort of)
-from customtkinter import CTk, CTkEntry, CTkButton, StringVar  #visually better Tk
+from customtkinter import CTk, CTkEntry, CTkButton, StringVar, set_default_color_theme  #visually better Tk
 from math import sqrt
 
 """
@@ -18,8 +18,9 @@ from math import sqrt
     How works:
     Take input from buttons (0-9), Store that data, do calculations, do until user quits and print final answer on CLI
 """
-expression = ""  #global variable for holding result
+expression = "0"  #global variable for holding result
 
+set_default_color_theme("green")  #default color of CTkWindow
 
 class Window(CTk):
     """
@@ -63,21 +64,29 @@ class Window(CTk):
 
         #buttons are added to grid and to list of buttons
         for num, col, row in buttonValues:
-            button = CTkButton(self, text=str(num), bg_color="green", width=10, height=1,
-                               command=partial(press, num))  #partial remembers to value to func
-            button.grid(column=col, row=row, padx=20, pady=20)
+            button = CTkButton(self, text=str(num), fg_color="green", width=35, height=15, hover_color="dark green",
+                               command=partial(press, num), font=("arial", 15, 'bold'))  #partial remembers to value to func
+            button.grid(column=col, row=row, padx=10)
             self.buttons.append(button)
 
 
 def press(num):
     global expression
-    if expression == "0":  # deletes first 0 (so we don't have something like 06, just 6)
+
+    if num not in (",", ".") and expression == "0":  # deletes first 0 (so we don't have something like 06, just 6)
         expression = ""
     if isinstance(num, str):  #checks if num is a string
         num = num.lower()  #lowers the first digit
         for key, value in window.operations.items():  #searches for function
             if key == num:
                 resultFunction = window.operations[num]
+
+                lastDigit = expression[-1]
+                isNumber = lastDigit.isnumeric()
+                if (not isNumber ) and lastDigit not in ("(", ")", "."):
+                    print(lastDigit)
+                    expression = expression[:-1]
+
                 resultFunction()  #uses function
     else:
 
@@ -116,11 +125,12 @@ def divide():  #divides the number
 def negation():  #negation of number
     global expression
 
-    if expression[0] == "-":
-        expression = expression[1:]
-    else:
-        expression = "-" + expression
-    textBox.set(expression)
+    if expression != "0" and len(expression) >= 1:
+        if expression[0] == "-":
+            expression = expression[1:]
+        else:
+            expression = "-" + expression
+        textBox.set(expression)
 
 
 def squareRoot():  #square root
@@ -139,7 +149,7 @@ def squareRoot():  #square root
 
 def floatNum():
     global expression
-    expression = expression + ".0"
+    expression = expression + "."
     textBox.set(expression)
 
 
