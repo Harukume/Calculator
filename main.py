@@ -81,13 +81,15 @@ def press(num):
             if key == num:
                 resultFunction = window.operations[num]
 
-                lastDigit = expression[-1]
-                isNumber = lastDigit.isnumeric()
-                if (not isNumber ) and lastDigit not in ("(", ")", "."):
-                    print(lastDigit)
-                    expression = expression[:-1]
+                if len(expression) >= 1:
+                    print(len(expression))
+                    lastDigit = expression[-1]
+                    isNumber = lastDigit.isnumeric()
+                    if (not isNumber) and lastDigit not in ("(", ")", "."):
+                        print(lastDigit)
+                        expression = expression[:-1]
 
-                resultFunction()  #uses function
+                    resultFunction()  #uses function
     else:
 
         expression = expression + str(num)
